@@ -4,11 +4,13 @@ const state = {
     enemy: document.querySelector(".enemy"),
     timeLeft: document.querySelector("#time-left"),
     score: document.querySelector("#score"),
+    hp: document.querySelector("#hp"),
   },
   values: {
     gameVelocity: 1000,
     hitPosition: 0,
     result: 0,
+    lifes: 3,
     curretTime: 60,
   },
   actions: {
@@ -16,6 +18,23 @@ const state = {
     countDownTimerId: setInterval(countDown, 1000),
   },
 };
+function reset(state){
+    state.values = {
+      gameVelocity: 1000,
+      hitPosition: 0,
+      result: 0,
+      lifes: 3,
+      curretTime: 60,
+    };
+    state.actions = {
+      timerId: setInterval(randomSquare, 1000),
+      countDownTimerId: setInterval(countDown, 1000),
+    };
+    state.view.hp.textContent = "x" + state.values.lifes;
+    state.view.score.textContent = state.values.result;
+    state.view.timeLeft.textContent = state.values.curretTime;
+  };
+
 
 function countDown() {
   state.values.curretTime--;
@@ -25,6 +44,7 @@ function countDown() {
     clearInterval(state.actions.countDownTimerId);
     clearInterval(state.actions.timerId);
     alert("Game Over! O seu resultado foi: " + state.values.result);
+    reset(state);
   }
 }
 
@@ -53,6 +73,14 @@ function addListenerHitBox() {
         state.view.score.textContent = state.values.result;
         state.values.hitPosition = null;
         playSound("hit");
+        randomSquare();
+      }else{
+        state.values.lifes--;
+        state.view.hp.textContent = "x" + state.values.lifes;
+        if(state.values.lifes == 0){
+          state.values.curretTime = 0;
+          countDown();
+        }
       }
     });
   });
